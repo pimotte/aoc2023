@@ -1,6 +1,9 @@
 import Lake
 open Lake DSL
 
+require std from git
+  "https://github.com/leanprover/std4/" @ "main"
+
 package «aoc2023» {
   -- add package configuration options here
 }

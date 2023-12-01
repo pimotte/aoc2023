@@ -1,4 +1,3 @@
-import «Aoc2023»
+import Aoc2023.Day1
 
-def main : IO Unit :=
-  IO.println s!"Hello, {hello}!"
+def main : IO Unit := day1part1
