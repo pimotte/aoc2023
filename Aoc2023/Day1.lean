@@ -16,10 +16,30 @@ partial def extractLines (stream : IO.FS.Stream): IO (List String) := do
 
 def Char.ToDigit : Char → Nat := λ char => char.toNat - 48
 
+
 def Char.Zero : Char := ⟨ 0x30 , by sorry ⟩
 def Char.Nine : Char := ⟨ 0x39 , by sorry ⟩
 theorem char_zero : Char.Zero.ToDigit = 0 := by rfl
 theorem char_nine : Char.Nine.ToDigit = 9 := by rfl
+
+def List.startsWith [BEq α] (haystack : List α) (needle: List α) : Bool :=
+  match haystack, needle with
+  | x :: xs, y :: ys => if x == y then xs.startsWith ys else false
+  | _ , [] => true
+  | _ , _ => false
+
+def maybeNumber (xs : List Char) : Option Nat :=
+  match xs with
+  | 'o' :: ('n' :: ('e' :: _)) => .some 1
+  | 't' :: ('w' :: ('o' :: _)) => .some 2
+  | 't' :: ('h' :: ('r' :: ('e' :: ('e' :: _)))) => .some 3
+  | 'f' :: ('o' :: ('u' :: ('r' :: _))) => .some 4
+  | 'f' :: ('i' :: ('v' :: ('e' :: _))) => .some 5
+  | 's' :: ('i' :: ('x' :: _)) => .some 6
+  | 's' :: ('e' :: ('v' :: ('e' :: ('n' :: _)))) => .some 7
+  | 'e' :: ('i' :: ('g' :: ('h' :: ('t' :: _)))) => .some 8
+  | 'n' :: ('i' :: ('n' :: ('e' :: _))) => .some 9
+  | _ => .none
 
 def charsToNats (xs : List Char) : List Nat :=
   match xs with
@@ -28,7 +48,9 @@ def charsToNats (xs : List Char) : List Nat :=
     if x.isDigit then
       x.ToDigit :: charsToNats xs
     else
-      charsToNats xs
+      match maybeNumber (x :: xs) with
+      | .none => charsToNats xs
+      | .some d => d :: charsToNats xs
 
 theorem charsToNatsSingle : charsToNats [Char.Zero] = [0] := by rfl
 
@@ -36,19 +58,6 @@ theorem charsToNatsDouble : charsToNats [Char.Zero, Char.Nine] = [0, 9] := by rf
 
 theorem charsToNatsTriple : charsToNats [Char.Zero, ⟨ 0x00 , by sorry ⟩, Char.Nine] = [0, 9] := by rfl
 
--- partial def processLineHelper (first : Option Nat) (last : Option Nat) (xs : String) : Option Nat :=
---   match xs.data with
---   | [] => do
---     let f ← first
---     let l ← first
---     return f*10 + l
---   | head :: tail =>
---     if head.isDigit then
---       match first with
---       | .none => processLineHelper (.some head.toNat) (.some head.toNat) (.mk tail)
---       | firstDigit => processLineHelper firstDigit (.some head.toNat) (.mk tail)
---     else
---       processLineHelper first last (.mk tail)
 
 def natsToAnswer (xs : List Nat) : Nat :=
   match xs with
