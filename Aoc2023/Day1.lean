@@ -1,7 +1,6 @@
-
+import Aoc2023.Common.Parsec
 
 def hello := "World"
-
 
 
 
@@ -14,7 +13,7 @@ partial def extractLines (stream : IO.FS.Stream): IO (List String) := do
     let tail ← extractLines stream
     return line :: tail
 
-def Char.ToDigit : Char → Nat := λ char => char.toNat - 48
+
 
 
 def Char.Zero : Char := ⟨ 0x30 , by sorry ⟩
